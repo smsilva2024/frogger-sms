@@ -24,6 +24,8 @@
     <button onclick="moveFrog(1,0)">➡️</button>
     <button onclick="moveFrog(0,1)">⬇️</button>
     <button onclick="restartGame()">Novo Jogo</button>
+    <button onclick="changeSpeed(1)" style="background:#0a0;">+Velocidade</button>
+    <button onclick="changeSpeed(-1)" style="background:#a00;">-Velocidade</button>
   </div>
   <script>
     const canvas = document.getElementById('game');
@@ -37,6 +39,7 @@
     let score = 0;
     let gameOver = false;
     let message = "";
+    let speedFactor = 1;
 
     // Cars and logs
     let cars = [];
@@ -141,13 +144,13 @@
     function updateObstacles() {
       // Cars
       for (const car of cars) {
-        car.x += car.dir * car.speed;
+        car.x += car.dir * car.speed * speedFactor;
         if (car.dir === 1 && car.x > COLS) car.x = -car.w;
         if (car.dir === -1 && car.x < -car.w) car.x = COLS;
       }
       // Logs
       for (const log of logs) {
-        log.x += log.dir * log.speed;
+        log.x += log.dir * log.speed * speedFactor;
         if (log.dir === 1 && log.x > COLS) log.x = -log.w;
         if (log.dir === -1 && log.x < -log.w) log.x = COLS;
       }
@@ -167,7 +170,7 @@
         for (const log of logs) {
           if (frog.y === log.y && frog.x + 0.4 >= log.x && frog.x <= log.x + log.w - 0.4) {
             onLog = true;
-            frog.x += log.dir * log.speed;
+            frog.x += log.dir * log.speed * speedFactor;
           }
         }
         if (!onLog) {
@@ -218,6 +221,12 @@
       document.getElementById("score").textContent = "Pontos: 0";
       draw();
       requestAnimationFrame(update);
+    }
+
+    function changeSpeed(delta) {
+      speedFactor += delta * 0.2;
+      if (speedFactor < 0.2) speedFactor = 0.2;
+      if (speedFactor > 3) speedFactor = 3;
     }
 
     // Touch support: deslizar para mover o sapo
